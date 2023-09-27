@@ -47,5 +47,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>profile photo addition<string/>
+	<key>NSCameraUsageDescription</key>
+	<string>profile photo addition<string/>
 </dict>
 </plist>

@@ -1,8 +1,12 @@
+import 'dart:typed_data';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:instagramclone/auth/auth.dart';
+import 'package:instagramclone/screens/home_screen.dart';
 import 'package:instagramclone/screens/login_screen.dart';
 import 'package:instagramclone/utils/colors.dart';
 
@@ -18,7 +22,10 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
-
+  final ImagePicker _picker = ImagePicker();
+  Uint8List? _pickedFile;
+  String responce = '';
+  bool isLoading = false;
   @override
   void dispose() {
     _emailController.dispose();
@@ -51,6 +58,24 @@ class _SignUpState extends State<SignUp> {
     return null;
   }
 
+  void _getImageFromGallery() async {
+    XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() async {
+        _pickedFile = await pickedFile.readAsBytes();
+      });
+    }
+  }
+
+  void _takePhoto() async {
+    XFile? pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() async {
+        _pickedFile = await pickedFile.readAsBytes();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -66,11 +91,46 @@ class _SignUpState extends State<SignUp> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Gap(20),
-              // SvgPicture.asset(
-              //   'assets/ic_instagram.png',
-              //   color: Colors.blue,
-              //   height: 64,
-              // ),
+              SvgPicture.asset(
+                'assets/ic_instagram.svg',
+                color: Colors.blue,
+                height: 64,
+              ),
+              const Gap(20),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.grey,
+                    backgroundImage:
+                        _pickedFile != null ? MemoryImage(_pickedFile!) : null,
+                    child: _pickedFile == null
+                        ? const Icon(
+                            Icons.person_outline,
+                            size: 60,
+                            color: Colors.white,
+                          )
+                        : null,
+                  ),
+                  Positioned(
+                    bottom: 8,
+                    right: 8,
+                    child: IconButton(
+                      icon: const Icon(Icons.file_upload),
+                      onPressed: _getImageFromGallery,
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 8,
+                    left: 8,
+                    child: IconButton(
+                      icon: const Icon(Icons.camera),
+                      onPressed: _takePhoto,
+                    ),
+                  ),
+                ],
+              ),
               const Gap(20),
               TextFormField(
                 controller: _emailController,
@@ -131,26 +191,81 @@ class _SignUpState extends State<SignUp> {
                 },
               ),
               const Gap(20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: size.height * .2,
-                    width: 100,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (Form.of(context).validate()) {
-                          final email = _emailController.text;
-                          final password = _passwordController.text;
-                          final name = _nameController.text;
-                          final bio = _bioController.text;
-                        }
-                      },
-                      child: const Text('Sign Up'),
+              isLoading
+                  ? SizedBox(
+                      height: size.height * .2,
+                      width: 100,
+                      child: const CircularProgressIndicator(
+                        color: Colors.blue,
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: size.height * .2,
+                          width: 100,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              isLoading = true;
+
+                              if (_emailController.text.isEmpty ||
+                                  _passwordController.text.isEmpty ||
+                                  _nameController.text.isEmpty ||
+                                  _bioController.text.isEmpty) {
+                                Get.snackbar(
+                                    "Error", "Please fill all the fields",
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    isDismissible: true,
+                                    duration: const Duration(seconds: 3));
+                                isLoading = false;
+                              } else if ((!Form.of(context).validate())) {
+                                Get.snackbar(
+                                    "Error", "Please fill all the fields",
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    isDismissible: true,
+                                    duration: const Duration(seconds: 3));
+                                isLoading = false;
+                              } else {
+                                final email = _emailController.text;
+                                final password = _passwordController.text;
+                                final name = _nameController.text;
+                                final bio = _bioController.text;
+                                final image = _pickedFile;
+
+                                responce = await Auth()
+                                    .signUp(email, password, name, bio, image);
+
+                                isLoading = false;
+                                if (responce == 'Welcome') {
+                                  Get.snackbar(responce, '',
+                                      backgroundColor: Colors.green,
+                                      colorText: Colors.white,
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      isDismissible: true,
+                                      duration: const Duration(seconds: 3));
+                                  Get.to(() => MyHomePage(
+                                        title: responce,
+                                      ));
+                                } else {
+                                  Get.snackbar(responce, '',
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      isDismissible: true,
+                                      duration: const Duration(seconds: 3));
+                                }
+                              }
+                            },
+                            child: const Text('Sign Up'),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
               RichText(
                 text: TextSpan(
                     style: const TextStyle(
@@ -161,7 +276,7 @@ class _SignUpState extends State<SignUp> {
                       TextSpan(
                           text: "Log In",
                           style: const TextStyle(
-                              color: Colors.blue, fontWeight: FontWeight.bold),
+                              color: blueColor, fontWeight: FontWeight.bold),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               Get.to(() => const LoginScreen());
