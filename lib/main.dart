@@ -7,7 +7,6 @@ import 'package:instagramclone/firebase_options.dart';
 import 'package:instagramclone/responsive/mobile_screen_layout.dart';
 import 'package:instagramclone/responsive/responsive_layout.dart';
 import 'package:instagramclone/responsive/web_screen_layout.dart';
-import 'package:instagramclone/screens/login_screen.dart';
 import 'package:instagramclone/utils/colors.dart';
 
 class NavigationService {
@@ -54,7 +53,9 @@ class MyApp extends StatelessWidget {
                 ),
               );
             }
-            return const LoginScreen();
+            return const ResponsiveLayout(
+                webScreenLayout: WebScreenLayout(),
+                mobileScreenLayout: MobileScreenLayout());
           }),
     );
   }
