@@ -1,12 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:instagramclone/models/user_model.dart';
-import 'package:instagramclone/providers/user_name_provider.dart';
+import 'package:instagramclone/screens/landing/landing_page.dart';
+import 'package:instagramclone/screens/post/post_story.dart';
+import 'package:instagramclone/screens/profile/profile_page.dart';
+import 'package:instagramclone/screens/search/search_stuff.dart';
+import 'package:instagramclone/screens/stories/stories_page.dart';
 import 'package:instagramclone/utils/colors.dart';
-import 'package:provider/provider.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -18,30 +17,51 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late UserModel userData;
   int _page = 0;
+  late PageController pageController;
+
   @override
   void initState() {
     super.initState();
-    getUser();
+
+    pageController = PageController();
   }
 
-  void getUser() async {
-    UserModel user = context.watch<UserNameProvider>().getUser;
+  @override
+  void dispose() {
+    super.dispose();
+    pageController.dispose();
+  }
+
+  void navigateToPage(int page) {
     setState(() {
-      userData = user;
+      _page = page;
     });
+    pageController.animateToPage(page,
+        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('${userData.userName}'),
+      body: PageView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: pageController,
+        onPageChanged: (value) {
+          setState(() {
+            _page = value;
+          });
+        },
+        children: const [
+          LandingPage(),
+          SearchPage(),
+          AddPost(),
+          StoriesPage(),
+          ProfilePage()
+        ],
       ),
-      body: const Center(),
-      bottomNavigationBar: CupertinoTabBar(items: [
+      bottomNavigationBar:
+          CupertinoTabBar(onTap: navigateToPage, currentIndex: _page, items: [
         BottomNavigationBarItem(
             icon: Icon(
               Icons.home,
@@ -50,19 +70,31 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Home',
             backgroundColor: mobileBackgroundColor),
         BottomNavigationBarItem(
-            icon: Icon(Icons.search_off),
+            icon: Icon(
+              Icons.search_off,
+              color: _page == 1 ? primaryColor : secondaryColor,
+            ),
             label: 'search',
             backgroundColor: mobileBackgroundColor),
         BottomNavigationBarItem(
-            icon: Icon(Icons.add_a_photo),
+            icon: Icon(
+              Icons.add_a_photo,
+              color: _page == 2 ? primaryColor : secondaryColor,
+            ),
             label: 'post',
             backgroundColor: mobileBackgroundColor),
         BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border),
-            label: 'folloers',
+            icon: Icon(
+              Icons.favorite_border,
+              color: _page == 3 ? primaryColor : secondaryColor,
+            ),
+            label: 'followers',
             backgroundColor: mobileBackgroundColor),
         BottomNavigationBarItem(
-            icon: Icon(Icons.person_3_outlined),
+            icon: Icon(
+              Icons.person_3_outlined,
+              color: _page == 4 ? primaryColor : secondaryColor,
+            ),
             label: 'profile',
             backgroundColor: mobileBackgroundColor),
       ]),
