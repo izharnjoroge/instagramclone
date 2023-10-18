@@ -67,4 +67,8 @@ class Auth {
     }
     return res;
   }
+
+  void logOut() async {
+    await _auth.signOut();
+  }
 }

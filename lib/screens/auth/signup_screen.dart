@@ -198,12 +198,15 @@ class _SignUpState extends State<SignUp> {
                   ),
                   const Gap(20),
                   isLoading
-                      ? SizedBox(
-                          height: size.height * .2,
-                          width: 100,
-                          child: const CircularProgressIndicator(
-                            color: Colors.blue,
-                          ),
+                      ? const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ],
                         )
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,

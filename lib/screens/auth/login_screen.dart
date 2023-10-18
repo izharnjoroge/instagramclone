@@ -4,10 +4,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:instagramclone/auth/auth.dart';
+import 'package:instagramclone/models/user_model.dart';
+import 'package:instagramclone/providers/user_name_provider.dart';
 import 'package:instagramclone/screens/auth/signup_screen.dart';
 import 'package:instagramclone/screens/dashboard/home_screen.dart';
 
 import 'package:instagramclone/utils/colors.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -20,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _loginFormKey = GlobalKey<FormState>();
+  final Auth _auth = Auth();
   bool _isPasswordVisible = false;
   String responce = '';
   bool isLoading = false;
@@ -62,13 +66,11 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SafeArea(
         child: isLoading
-            ? Column(
+            ? const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: size.height * .2,
-                    width: 100,
-                    child: const CircularProgressIndicator(
+                  Center(
+                    child: CircularProgressIndicator(
                       color: Colors.blue,
                     ),
                   ),
@@ -167,9 +169,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       responce =
                                           await Auth().logIn(email, password);
 
-                                      isLoading = false;
-                                      isLoading = false;
                                       if (responce == 'Success') {
+                                        isLoading = false;
                                         Get.snackbar(responce, '',
                                             backgroundColor: Colors.green,
                                             colorText: Colors.white,
@@ -177,9 +178,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                             isDismissible: true,
                                             duration:
                                                 const Duration(seconds: 3));
-
+                                        UserModel user =
+                                            await _auth.getUserData();
+                                        print(user);
+                                        context
+                                            .read<UserNameProvider>()
+                                            .isUser = user;
                                         Get.offAll(() => const MyHomePage());
                                       } else {
+                                        isLoading = false;
                                         Get.snackbar(responce, '',
                                             backgroundColor: Colors.red,
                                             colorText: Colors.white,
@@ -187,6 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             isDismissible: true,
                                             duration:
                                                 const Duration(seconds: 3));
+                                        Get.back();
                                       }
                                     }
                                   },
