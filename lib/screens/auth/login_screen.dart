@@ -180,7 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 const Duration(seconds: 3));
                                         UserModel user =
                                             await _auth.getUserData();
-                                        print(user);
+
                                         context
                                             .read<UserNameProvider>()
                                             .isUser = user;

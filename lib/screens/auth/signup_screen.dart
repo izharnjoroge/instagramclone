@@ -63,17 +63,20 @@ class _SignUpState extends State<SignUp> {
   void _getImageFromGallery() async {
     XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() async {
-        _pickedFile = await pickedFile.readAsBytes();
+      Uint8List photo = await pickedFile.readAsBytes();
+      setState(() {
+        _pickedFile = photo;
       });
     }
   }
 
   void _takePhoto() async {
     XFile? pickedFile = await _picker.pickImage(source: ImageSource.camera);
+
     if (pickedFile != null) {
-      setState(() async {
-        _pickedFile = await pickedFile.readAsBytes();
+      Uint8List photo = await pickedFile.readAsBytes();
+      setState(() {
+        _pickedFile = photo;
       });
     }
   }
@@ -266,6 +269,7 @@ class _SignUpState extends State<SignUp> {
                                           snackPosition: SnackPosition.BOTTOM,
                                           isDismissible: true,
                                           duration: const Duration(seconds: 3));
+                                      Get.back();
                                     }
                                   }
                                 },
