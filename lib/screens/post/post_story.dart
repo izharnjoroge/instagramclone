@@ -26,9 +26,9 @@ class _AddPostState extends State<AddPost> {
     _descriptionController.dispose();
   }
 
-  void _selectImage(BuildContext parentContext) async {
+  void _selectImage(BuildContext context) async {
     return showDialog(
-      context: parentContext,
+      context: context,
       builder: (BuildContext context) {
         return SimpleDialog(
           title: const Text('Create a Post'),

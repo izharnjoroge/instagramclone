@@ -39,6 +39,7 @@ dependencies:
   gap: ^3.0.1
   get: ^4.6.5
   image_picker: ^1.0.4
+  intl: ^0.18.1
   provider: ^6.0.5
   svg_flutter: ^0.0.1
   uuid: ^4.1.0
