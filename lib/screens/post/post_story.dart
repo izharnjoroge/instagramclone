@@ -143,6 +143,7 @@ class _AddPostState extends State<AddPost> {
                 children: [
                   SizedBox(
                     width: size.width - 100,
+                    height: 40,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(primary: Colors.blue),
                         onPressed: () async {

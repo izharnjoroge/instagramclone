@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:instagramclone/screens/landing/landing_page.dart';
@@ -52,12 +53,14 @@ class _MyHomePageState extends State<MyHomePage> {
             _page = value;
           });
         },
-        children: const [
-          LandingPage(),
-          SearchPage(),
-          AddPost(),
-          StoriesPage(),
-          ProfilePage()
+        children: [
+          const LandingPage(),
+          const SearchPage(),
+          const AddPost(),
+          const StoriesPage(),
+          ProfileScreen(
+            uid: FirebaseAuth.instance.currentUser!.uid,
+          )
         ],
       ),
       bottomNavigationBar:

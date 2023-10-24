@@ -38,8 +38,8 @@ class _PostCardState extends State<PostCard> {
     setState(() {});
   }
 
-  void animate() {
-    const Icon(Icons.thumb_up_alt_outlined)
+  Widget animate() {
+    return const Icon(Icons.thumb_up_alt_outlined)
         .animate()
         .fadeIn(duration: 600.ms)
         .then(delay: 200.ms)
@@ -135,7 +135,7 @@ class _PostCardState extends State<PostCard> {
                         color: Colors.white,
                       )),
               IconButton(
-                  onPressed: () => Get.to(CommentScreen(
+                  onPressed: () => Get.to(() => CommentScreen(
                         postId: widget.snap['postId'],
                       )),
                   icon: const Icon(Icons.comment)),
