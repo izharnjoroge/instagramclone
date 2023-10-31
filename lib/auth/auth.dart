@@ -31,9 +31,11 @@ class Auth {
       if (file != null) {
         profileUrl = await Storage().uploadImage('profileImages', file, false);
       }
+      print(profileUrl);
       UserModel model = UserModel(
           uid: credential.user!.uid,
           userName: name,
+          profUrl: profileUrl,
           bio: bio,
           email: email,
           followers: [],

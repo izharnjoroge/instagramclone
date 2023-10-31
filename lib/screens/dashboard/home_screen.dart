@@ -7,6 +7,10 @@ import 'package:instagramclone/screens/profile/profile_page.dart';
 import 'package:instagramclone/screens/search/search_stuff.dart';
 import 'package:instagramclone/screens/stories/stories_page.dart';
 import 'package:instagramclone/utils/colors.dart';
+import 'package:provider/provider.dart';
+
+import '../../models/user_model.dart';
+import '../../providers/user_name_provider.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -20,6 +24,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _page = 0;
   late PageController pageController;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -59,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
           const AddPost(),
           const StoriesPage(),
           ProfileScreen(
-            uid: FirebaseAuth.instance.currentUser!.uid,
+            uid: _auth.currentUser!.uid,
           )
         ],
       ),
@@ -71,35 +76,35 @@ class _MyHomePageState extends State<MyHomePage> {
               color: _page == 0 ? primaryColor : secondaryColor,
             ),
             label: 'Home',
-            backgroundColor: mobileBackgroundColor),
+            backgroundColor: Colors.black),
         BottomNavigationBarItem(
             icon: Icon(
               Icons.search_off,
               color: _page == 1 ? primaryColor : secondaryColor,
             ),
             label: 'search',
-            backgroundColor: mobileBackgroundColor),
+            backgroundColor: Colors.black),
         BottomNavigationBarItem(
             icon: Icon(
               Icons.add_a_photo,
               color: _page == 2 ? primaryColor : secondaryColor,
             ),
             label: 'post',
-            backgroundColor: mobileBackgroundColor),
+            backgroundColor: Colors.black),
         BottomNavigationBarItem(
             icon: Icon(
               Icons.favorite_border,
               color: _page == 3 ? primaryColor : secondaryColor,
             ),
             label: 'followers',
-            backgroundColor: mobileBackgroundColor),
+            backgroundColor: Colors.black),
         BottomNavigationBarItem(
             icon: Icon(
               Icons.person_3_outlined,
               color: _page == 4 ? primaryColor : secondaryColor,
             ),
             label: 'profile',
-            backgroundColor: mobileBackgroundColor),
+            backgroundColor: Colors.black),
       ]),
     );
   }

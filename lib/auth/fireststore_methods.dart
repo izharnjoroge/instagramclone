@@ -90,6 +90,17 @@ class FireStoreMethods {
     return res;
   }
 
+  Future<String> changeProfileImage(String userId) async {
+    String res = "Some error occurred";
+    try {
+      await _firestore.collection('Users').doc(userId).delete();
+      res = 'success';
+    } catch (err) {
+      res = err.toString();
+    }
+    return res;
+  }
+
   Future<void> followUser(String uid, String followId) async {
     try {
       DocumentSnapshot snap =

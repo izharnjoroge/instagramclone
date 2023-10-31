@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
@@ -8,8 +7,6 @@ import 'package:instagramclone/models/user_model.dart';
 import 'package:instagramclone/providers/user_name_provider.dart';
 import 'package:instagramclone/screens/auth/signup_screen.dart';
 import 'package:instagramclone/screens/dashboard/home_screen.dart';
-
-import 'package:instagramclone/utils/colors.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -76,157 +73,198 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               )
-            : Form(
-                key: _loginFormKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Gap(20),
-                          SvgPicture.asset(
-                            'assets/ic_instagram.svg',
-                            color: Colors.blue,
-                            height: 64,
+            : SingleChildScrollView(
+                child: Form(
+                  key: _loginFormKey,
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      children: [
+                        const Gap(100),
+                        SvgPicture.asset(
+                          'assets/ic_instagram.svg',
+                          color: Colors.black,
+                          height: 64,
+                        ),
+                        const Gap(20),
+                        TextFormField(
+                          controller: _emailController,
+                          cursorColor: Colors.black,
+                          decoration: const InputDecoration(
+                            labelText: 'Email',
+                            hintText: 'Enter your email',
                           ),
-                          const Gap(20),
-                          TextFormField(
-                            controller: _emailController,
-                            decoration: const InputDecoration(
-                              labelText: 'Email',
-                              hintText: 'Enter your email',
+                          keyboardType: TextInputType.emailAddress,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (val) {
+                            validateEmail(_emailController.text);
+                            return null;
+                          },
+                        ),
+                        const Gap(20),
+                        TextFormField(
+                          controller: _passwordController,
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            hintText: 'Enter your password',
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                !_isPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: _togglePasswordVisibility,
                             ),
-                            keyboardType: TextInputType.emailAddress,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            validator: (val) {
-                              validateEmail(_emailController.text);
-                              return null;
-                            },
                           ),
-                          const Gap(20),
-                          TextFormField(
-                            controller: _passwordController,
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                              labelText: 'Password',
-                              hintText: 'Enter your password',
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  !_isPasswordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                ),
-                                onPressed: _togglePasswordVisibility,
+                          obscureText: _isPasswordVisible,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (val) {
+                            validatePassword(_passwordController.text);
+                            return null;
+                          },
+                        ),
+                        const Gap(20),
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              'Forgot Password?',
+                              style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        const Gap(20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: size.height * .05,
+                              width: size.width - 100,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+
+                                  if (_emailController.text.isEmpty ||
+                                      _passwordController.text.isEmpty) {
+                                    Get.snackbar(
+                                        "Error", "Please fill all the fields",
+                                        backgroundColor: Colors.red,
+                                        colorText: Colors.white,
+                                        snackPosition: SnackPosition.BOTTOM,
+                                        isDismissible: true,
+                                        duration: const Duration(seconds: 3));
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  } else if (!_loginFormKey.currentState!
+                                      .validate()) {
+                                    Get.snackbar(
+                                        "Error", "Please fill all the fields",
+                                        backgroundColor: Colors.red,
+                                        colorText: Colors.white,
+                                        snackPosition: SnackPosition.BOTTOM,
+                                        isDismissible: true,
+                                        duration: const Duration(seconds: 3));
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  } else {
+                                    final email = _emailController.text;
+                                    final password = _passwordController.text;
+                                    responce =
+                                        await Auth().logIn(email, password);
+
+                                    if (responce == 'Success') {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      UserModel user =
+                                          await _auth.getUserData();
+                                      context.read<UserNameProvider>().isUser =
+                                          user;
+                                      Get.snackbar(responce, '',
+                                          backgroundColor: Colors.green,
+                                          colorText: Colors.white,
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          isDismissible: true,
+                                          duration: const Duration(seconds: 3));
+
+                                      Get.offAll(() => const MyHomePage());
+                                    } else {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      Get.snackbar(responce, '',
+                                          backgroundColor: Colors.red,
+                                          colorText: Colors.white,
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          isDismissible: true,
+                                          duration: const Duration(seconds: 3));
+                                      Get.back();
+                                    }
+                                  }
+                                },
+                                child: isLoading
+                                    ? const Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.blue,
+                                        ),
+                                      )
+                                    : const Text('Continue'),
                               ),
                             ),
-                            obscureText: _isPasswordVisible,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            validator: (val) {
-                              validatePassword(_passwordController.text);
-                              return null;
-                            },
-                          ),
-                          const Gap(20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          ],
+                        ),
+                        const Gap(50),
+                        SizedBox(
+                          height: size.height * 0.2,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SizedBox(
-                                height: size.height * .05,
-                                width: 100,
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    isLoading = true;
-
-                                    if (_emailController.text.isEmpty ||
-                                        _passwordController.text.isEmpty) {
-                                      Get.snackbar(
-                                          "Error", "Please fill all the fields",
-                                          backgroundColor: Colors.red,
-                                          colorText: Colors.white,
-                                          snackPosition: SnackPosition.BOTTOM,
-                                          isDismissible: true,
-                                          duration: const Duration(seconds: 3));
-                                      isLoading = false;
-                                    } else if (!_loginFormKey.currentState!
-                                        .validate()) {
-                                      Get.snackbar(
-                                          "Error", "Please fill all the fields",
-                                          backgroundColor: Colors.red,
-                                          colorText: Colors.white,
-                                          snackPosition: SnackPosition.BOTTOM,
-                                          isDismissible: true,
-                                          duration: const Duration(seconds: 3));
-                                      isLoading = false;
-                                    } else {
-                                      final email = _emailController.text;
-                                      final password = _passwordController.text;
-                                      responce =
-                                          await Auth().logIn(email, password);
-
-                                      if (responce == 'Success') {
-                                        isLoading = false;
-                                        Get.snackbar(responce, '',
-                                            backgroundColor: Colors.green,
-                                            colorText: Colors.white,
-                                            snackPosition: SnackPosition.BOTTOM,
-                                            isDismissible: true,
-                                            duration:
-                                                const Duration(seconds: 3));
-                                        UserModel user =
-                                            await _auth.getUserData();
-
-                                        context
-                                            .read<UserNameProvider>()
-                                            .isUser = user;
-                                        Get.offAll(() => const MyHomePage());
-                                      } else {
-                                        isLoading = false;
-                                        Get.snackbar(responce, '',
-                                            backgroundColor: Colors.red,
-                                            colorText: Colors.white,
-                                            snackPosition: SnackPosition.BOTTOM,
-                                            isDismissible: true,
-                                            duration:
-                                                const Duration(seconds: 3));
-                                        Get.back();
-                                      }
-                                    }
-                                  },
-                                  child: const Text('Continue'),
-                                ),
+                              const Text(
+                                'Log In With Facebook',
+                                style: TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const Text(
+                                'OR',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Get.to(() => const SignUp());
+                                },
+                                child: RichText(
+                                    selectionColor: Colors.grey,
+                                    text: const TextSpan(children: [
+                                      TextSpan(
+                                          text: 'Dont have an account?  ',
+                                          style: TextStyle(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold)),
+                                      TextSpan(
+                                          text: 'Sign Up',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Color.fromARGB(
+                                                255, 105, 103, 103),
+                                          ))
+                                    ])),
                               ),
                             ],
                           ),
-                          const Gap(20),
-                          RichText(
-                            text: TextSpan(
-                                style: const TextStyle(
-                                  color: textColor,
-                                ),
-                                children: [
-                                  const TextSpan(
-                                      text: "Dont have an account ?"),
-                                  TextSpan(
-                                      text: "Sign Up",
-                                      style: const TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () {
-                                          Get.to(() => const SignUp());
-                                        })
-                                ]),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
       ),

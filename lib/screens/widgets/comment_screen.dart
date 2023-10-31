@@ -31,9 +31,12 @@ class _CommentScreenState extends State<CommentScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: textColor,
-          title: const Text('Comments'),
-          automaticallyImplyLeading: true,
+          backgroundColor: Colors.white,
+          title: const Text(
+            'Comments',
+            style: TextStyle(color: Colors.black),
+          ),
+          centerTitle: true,
         ),
         body: StreamBuilder(
           stream: FirebaseFirestore.instance
@@ -111,17 +114,18 @@ class _CommentScreenState extends State<CommentScreen> {
                           snackPosition: SnackPosition.BOTTOM,
                           isDismissible: true,
                           duration: const Duration(seconds: 3));
+                    } else {
+                      await FireStoreMethods().postComment(
+                        widget.postId,
+                        commentEditingController.text,
+                        user.uid,
+                        user.userName,
+                        user.profUrl ?? '',
+                      );
+                      setState(() {
+                        commentEditingController.clear();
+                      });
                     }
-                    await FireStoreMethods().postComment(
-                      widget.postId,
-                      commentEditingController.text,
-                      user.uid,
-                      user.userName,
-                      user.profUrl ?? '',
-                    );
-                    setState(() {
-                      commentEditingController.clear();
-                    });
                   },
                   child: Container(
                     padding:

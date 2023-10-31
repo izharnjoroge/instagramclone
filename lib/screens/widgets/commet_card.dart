@@ -16,12 +16,17 @@ class _CommentCardState extends State<CommentCard> {
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       child: Row(
         children: [
-          const CircleAvatar(
-            // backgroundImage: NetworkImage(
-            //   widget.snap['profilePic'],
-            // ),
-            backgroundColor: Colors.grey,
+          CircleAvatar(
+            backgroundImage: NetworkImage(
+              widget.snap['profilePic'],
+            ),
+            backgroundColor: Colors.white,
             radius: 18,
+            child: const Icon(
+              Icons.person_2_outlined,
+              color: Colors.black,
+              size: 18,
+            ),
           ),
           Expanded(
             child: Padding(
@@ -36,11 +41,14 @@ class _CommentCardState extends State<CommentCard> {
                         TextSpan(
                             text: widget.snap['name'],
                             style: const TextStyle(
+                              color: Colors.blue,
                               fontWeight: FontWeight.bold,
                             )),
                         TextSpan(
-                          text: ' ${widget.snap['text']}',
-                        ),
+                            text: ' ${widget.snap['text']}',
+                            style: const TextStyle(
+                              color: Colors.black,
+                            )),
                       ],
                     ),
                   ),

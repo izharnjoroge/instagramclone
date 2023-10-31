@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:instagramclone/auth/fireststore_methods.dart';
 import 'package:instagramclone/providers/user_name_provider.dart';
@@ -81,21 +82,35 @@ class _AddPostState extends State<AddPost> {
     }
   }
 
+  void deleteImage() {
+    setState(() {
+      _pickedFile = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () => deleteImage(),
+            icon: const Icon(
+              Icons.delete_forever,
+              color: Colors.black,
+            )),
         backgroundColor: mobileBackgroundColor,
-        automaticallyImplyLeading: true,
-        title: const Text('Posts'),
+        centerTitle: true,
+        title: const Text(
+          'Post Story',
+          style: TextStyle(color: Colors.black),
+        ),
         actions: [
-          TextButton(
+          IconButton(
               onPressed: () => _selectImage(context),
-              child: const Text(
-                'Add Post',
-                style:
-                    TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+              icon: const Icon(
+                Icons.select_all,
+                color: Colors.black,
               ))
         ],
       ),
@@ -107,7 +122,7 @@ class _AddPostState extends State<AddPost> {
             children: [
               _pickedFile != null
                   ? Container(
-                      height: size.height * .3,
+                      height: size.height * .5,
                       width: size.width * .9,
                       decoration: BoxDecoration(
                           image: DecorationImage(
@@ -117,7 +132,7 @@ class _AddPostState extends State<AddPost> {
                       )),
                     )
                   : SizedBox(
-                      height: size.height * .3,
+                      height: size.height * .5,
                       width: size.width * .9,
                       child: AspectRatio(
                         aspectRatio: 487 / 451,
@@ -129,15 +144,20 @@ class _AddPostState extends State<AddPost> {
                         ),
                       ),
                     ),
+              const Gap(10),
               SizedBox(
-                width: size.width * 0.3,
+                width: size.width * 0.9,
+                height: size.height * 0.2,
                 child: TextField(
                   controller: _descriptionController,
                   decoration: const InputDecoration(
-                      hintText: "Write a caption...", border: InputBorder.none),
+                      hintText: "Write a caption...",
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black))),
                   maxLines: 8,
                 ),
               ),
+              const Gap(10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -197,6 +217,7 @@ class _AddPostState extends State<AddPost> {
                               });
                               setState(() {
                                 _pickedFile = null;
+                                _descriptionController.clear();
                               });
                             } else {
                               Get.snackbar(responce, '',
