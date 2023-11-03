@@ -29,20 +29,19 @@ class _SearchScreenState extends State<SearchPage> {
               child: TextFormField(
                 controller: searchController,
                 decoration: const InputDecoration(
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Colors.black,
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Colors.black,
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0xFF000000),
+                      width: 1.0,
+                      style: BorderStyle.solid,
                     ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFF000000),
-                        width: 1.0,
-                        style: BorderStyle.solid,
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    ),
-                    labelText: 'Search ',
-                    labelStyle: TextStyle(color: Colors.white)),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                ),
                 onFieldSubmitted: (String _) {
                   setState(() {
                     isShowUsers = true;

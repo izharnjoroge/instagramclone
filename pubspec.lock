@@ -485,6 +485,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  spacer:
+    dependency: "direct main"
+    description:
+      name: spacer
+      sha256: c21b61c8b180f7a89f9c84c665d142f381bcf11a96eb7331597573a8506ef017
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   sprintf:
     dependency: transitive
     description:

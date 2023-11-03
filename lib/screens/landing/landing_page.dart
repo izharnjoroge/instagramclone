@@ -17,8 +17,9 @@ class LandingPage extends StatelessWidget {
         title: SvgPicture.asset(
           'assets/ic_instagram.svg',
           color: Colors.black,
-          height: 32,
+          height: 40,
         ),
+        elevation: 1,
         centerTitle: true,
         actions: [
           IconButton(

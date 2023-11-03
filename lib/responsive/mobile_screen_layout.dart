@@ -40,7 +40,7 @@ class MobileScreenLayout extends StatelessWidget {
                           child: const Text(
                             'Sign In',
                             style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
@@ -49,7 +49,7 @@ class MobileScreenLayout extends StatelessWidget {
                   const Gap(20),
                   const Text(
                     'Switch Accounts',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

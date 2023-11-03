@@ -1,11 +1,13 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagramclone/auth/auth.dart';
 import 'package:instagramclone/screens/auth/login_screen.dart';
 import 'package:instagramclone/screens/dashboard/home_screen.dart';
+import 'package:instagramclone/utils/colors.dart';
 import 'package:provider/provider.dart';
 import '../../models/user_model.dart';
 import '../../providers/user_name_provider.dart';
@@ -86,137 +88,173 @@ class _SignUpState extends State<SignUp> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: const Text('Create Account'),
+        elevation: 0,
+        backgroundColor: mobileBackgroundColor,
+        title: SvgPicture.asset(
+          'assets/ic_instagram.svg',
+          color: Colors.black,
+          height: 42,
+        ),
         centerTitle: true,
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            width: double.infinity,
-            child: Form(
-              key: _signUpFormKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Gap(20),
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      CircleAvatar(
-                        radius: 100,
-                        backgroundColor: Colors.grey,
-                        backgroundImage: _pickedFile != null
-                            ? MemoryImage(_pickedFile!)
-                            : null,
-                        child: _pickedFile == null
-                            ? const Icon(
-                                Icons.person_outline,
-                                size: 60,
-                                color: Colors.white,
-                              )
-                            : null,
-                      ),
-                      Positioned(
-                        bottom: 8,
-                        right: 6,
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.file_upload,
-                          ),
-                          onPressed: _getImageFromGallery,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          width: double.infinity,
+          child: Form(
+            key: _signUpFormKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Gap(20),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 100,
+                      backgroundColor: Colors.grey,
+                      backgroundImage: _pickedFile != null
+                          ? MemoryImage(_pickedFile!)
+                          : null,
+                      child: _pickedFile == null
+                          ? const Icon(
+                              Icons.person_outline,
+                              size: 60,
+                              color: Colors.white,
+                            )
+                          : null,
+                    ),
+                    Positioned(
+                      bottom: 18,
+                      right: 10,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.file_upload,
                         ),
+                        onPressed: _getImageFromGallery,
                       ),
-                      Positioned(
-                        bottom: 18,
-                        left: 18,
-                        child: IconButton(
-                          icon: const Icon(Icons.camera),
-                          onPressed: _takePhoto,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Gap(20),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'User Name',
-                      hintText: 'Enter your User Name',
                     ),
-                    keyboardType: TextInputType.name,
+                    Positioned(
+                      bottom: 18,
+                      left: 16,
+                      child: IconButton(
+                        icon: const Icon(Icons.camera),
+                        onPressed: _takePhoto,
+                      ),
+                    ),
+                  ],
+                ),
+                const Gap(20),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'User Name',
+                    hintText: 'Enter your User Name',
+                  ),
+                  keyboardType: TextInputType.name,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (val) {
+                    if (val == null || val.isEmpty) {
+                      return "Please enter valid Name";
+                    }
+                    return null;
+                  },
+                ),
+                const Gap(20),
+                TextFormField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      hintText: 'Enter your email',
+                    ),
+                    keyboardType: TextInputType.emailAddress,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (val) {
-                      if (val == null || val.isEmpty) {
-                        return "Please enter valid Name";
-                      }
+                      validateEmail(_emailController.text);
                       return null;
-                    },
+                    }),
+                const Gap(20),
+                TextFormField(
+                  controller: _bioController,
+                  decoration: const InputDecoration(
+                    labelText: 'Bio',
+                    hintText: 'Enter your Bio',
                   ),
-                  const Gap(20),
-                  TextFormField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        hintText: 'Enter your email',
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (val) {
-                        validateEmail(_emailController.text);
-                        return null;
-                      }),
-                  const Gap(20),
-                  TextFormField(
-                    controller: _bioController,
-                    decoration: const InputDecoration(
-                      labelText: 'Bio',
-                      hintText: 'Enter your Bio',
-                    ),
-                    keyboardType: TextInputType.name,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (val) {
-                      if (val == null || val.isEmpty) {
-                        return "Please enter valid Bio";
-                      }
-                      return null;
-                    },
+                  keyboardType: TextInputType.name,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (val) {
+                    if (val == null || val.isEmpty) {
+                      return "Please enter valid Bio";
+                    }
+                    return null;
+                  },
+                ),
+                const Gap(20),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Password',
+                    hintText: 'Enter your password',
                   ),
-                  const Gap(20),
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      hintText: 'Enter your password',
-                    ),
-                    obscureText: true,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (val) {
-                      validatePassword(_passwordController.text);
-                      return null;
-                    },
-                  ),
-                  const Gap(20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: size.height * .05,
-                        width: 100,
-                        child: ElevatedButton(
-                          onPressed: () async {
+                  obscureText: true,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (val) {
+                    validatePassword(_passwordController.text);
+                    return null;
+                  },
+                ),
+                const Gap(20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: size.height * .05,
+                      width: size.width - 100,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          setState(() {
+                            isLoading = true;
+                          });
+
+                          if (_emailController.text.isEmpty ||
+                              _passwordController.text.isEmpty ||
+                              _nameController.text.isEmpty ||
+                              _bioController.text.isEmpty) {
+                            Get.snackbar("Error", "Please fill all the fields",
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                                snackPosition: SnackPosition.BOTTOM,
+                                isDismissible: true,
+                                duration: const Duration(seconds: 3));
                             setState(() {
-                              isLoading = true;
+                              isLoading = false;
                             });
+                          } else if ((!_signUpFormKey.currentState!
+                              .validate())) {
+                            Get.snackbar("Error", "Please fill all the fields",
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                                snackPosition: SnackPosition.BOTTOM,
+                                isDismissible: true,
+                                duration: const Duration(seconds: 3));
+                            setState(() {
+                              isLoading = false;
+                            });
+                          } else {
+                            final email = _emailController.text;
+                            final password = _passwordController.text;
+                            final name = _nameController.text;
+                            final bio = _bioController.text;
+                            final image = _pickedFile;
 
-                            if (_emailController.text.isEmpty ||
-                                _passwordController.text.isEmpty ||
-                                _nameController.text.isEmpty ||
-                                _bioController.text.isEmpty) {
-                              Get.snackbar(
-                                  "Error", "Please fill all the fields",
-                                  backgroundColor: Colors.red,
+                            responce = await Auth()
+                                .signUp(email, password, name, bio, image);
+
+                            if (responce == 'Welcome') {
+                              UserModel user = await _auth.getUserData();
+                              context.read<UserNameProvider>().isUser = user;
+                              Get.snackbar(responce, '',
+                                  backgroundColor: Colors.green,
                                   colorText: Colors.white,
                                   snackPosition: SnackPosition.BOTTOM,
                                   isDismissible: true,
@@ -224,87 +262,53 @@ class _SignUpState extends State<SignUp> {
                               setState(() {
                                 isLoading = false;
                               });
-                            } else if ((!_signUpFormKey.currentState!
-                                .validate())) {
-                              Get.snackbar(
-                                  "Error", "Please fill all the fields",
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
-                                  snackPosition: SnackPosition.BOTTOM,
-                                  isDismissible: true,
-                                  duration: const Duration(seconds: 3));
-                              setState(() {
-                                isLoading = false;
-                              });
+                              Get.offAll(() => const MyHomePage());
                             } else {
-                              final email = _emailController.text;
-                              final password = _passwordController.text;
-                              final name = _nameController.text;
-                              final bio = _bioController.text;
-                              final image = _pickedFile;
-
-                              responce = await Auth()
-                                  .signUp(email, password, name, bio, image);
-
-                              if (responce == 'Welcome') {
-                                UserModel user = await _auth.getUserData();
-                                context.read<UserNameProvider>().isUser = user;
-                                Get.snackbar(responce, '',
-                                    backgroundColor: Colors.green,
-                                    colorText: Colors.white,
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    isDismissible: true,
-                                    duration: const Duration(seconds: 3));
-                                setState(() {
-                                  isLoading = false;
-                                });
-                                Get.offAll(() => const MyHomePage());
-                              } else {
-                                Get.snackbar(responce, '',
-                                    backgroundColor: Colors.red,
-                                    colorText: Colors.white,
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    isDismissible: true,
-                                    duration: const Duration(seconds: 3));
-                                setState(() {
-                                  isLoading = false;
-                                });
-                                Get.back();
-                              }
+                              Get.snackbar(responce, '',
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  isDismissible: true,
+                                  duration: const Duration(seconds: 3));
+                              setState(() {
+                                isLoading = false;
+                              });
+                              Get.back();
                             }
-                          },
-                          child: isLoading
-                              ? const Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.blue,
-                                  ),
-                                )
-                              : const Text('Sign Up'),
-                        ),
+                          }
+                        },
+                        child: isLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.blue,
+                                ),
+                              )
+                            : const Text('Sign Up'),
                       ),
-                    ],
-                  ),
-                  const Gap(20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Already have an account?',
-                        style: TextStyle(color: Colors.blue),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Already have an account?',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    const Gap(10),
+                    GestureDetector(
+                      onTap: () => Get.to(() => const LoginScreen()),
+                      child: const Text(
+                        'Log In',
+                        style: TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.bold),
                       ),
-                      const Gap(10),
-                      GestureDetector(
-                        onTap: () => Get.to(() => const LoginScreen()),
-                        child: const Text(
-                          'Log In',
-                          style: TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold),
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
+                    )
+                  ],
+                ),
+                const Spacer(),
+              ],
             ),
           ),
         ),
